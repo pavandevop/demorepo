@@ -1,0 +1,181 @@
+launch virtual server-rehat/amazon linux:
+___________________________________________
+
+    
+    how to launch the ec2: aws management console/ terraform
+
+
+installing git on your local machine/linux server:
+______________________________________________________
+
+  sudo yum install -y git
+
+
+check the git version:
+_________________________
+  $ git --version
+
+
+How to install require package thru shell function:
+______________________________________________________
+
+function InstallPackage()
+{
+
+     sudo yum install -y $1
+     sudo yum remove -y $1
+}
+
+ InstallPackage git
+
+
+How to Install Java:
+______________________
+jdk 1.8
+
+note: its always good practice to keep all downloaded file as s/w
+      and configuration files and other files in to /opt
+$sudo su -
+#sudo yum install java-1.8*
+check java version:
+______________________
+ 
+  # java -version
+configure the JVM path after java installation and to  recognze the  path by JRE for running the java
+___________________________________________________________
+
+#find /usr/lib/jvm/java-1.8* | head -n 3
+take the last line as input for the .bash_profile
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-2.el8_5.x86_64
+
+>open the the blow file
+vi ~/.bash_profile
+
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-2.el8_5.x86_64
+>go the PATH VARIABLE, GO TO END , GIVE:$JAVA_HOME
+>:wq[save and exit]
+>logout 
+>sudo su -
+#echo $JAVA_HOME
+
+>Download and configure MAVEN:
+____________________________________
+
+go to google.com
+
+enter suggestion as "download maven"
+https://maven.apache.org/download.cgi
+click on above link
+
+select the fistlink:
+https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+go back to linux box
+sudo su -
+cd /opt
+sudo yum install -y wget if there is no wget
+wget https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+ extract files frm the tar.gz:
+_______________________________
+tar -xzvf apache-maven-3.8.4-bin.tar.gz
+ls
+mv apache-maven-3.8.4 maven
+ls
+rm -rf apache-maven-3.8.4-bin.tar.gz
+
+configure  environment varaibles for maven :
+_____________________________________________
+
+M2_HOME=/opt/maven
+M2=/opt/maven/bin
+========================================================
+view on .bash_profile
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-2.el8_5.x86_64
+M2_HOME=/opt/maven
+M2=/opt/maven/bin
+PATH=$PATH:$HOME/bin:$JAVA_HOME:$M2_HOME:$M2
+
+export PATH
+~
+========================================================
+to check mvn version:
+________________________
+
+$mvn --version
+
+download and configure tomcat:
+___________________________________
+
+https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.92/bin/
+https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.92/bin/apache-tomcat-7.0.92.tar.gz
+
+tar -xzvf tomcat-7/v7.0.92/bin/apache-tomcat-7.0.92.tar.gz
+mv apache-tomcat-7.0.92 tomcat
+
+cd tomcat
+cd /conf
+
+vi tomcat-users.xml
+
+go the end, after xml comments,here just copy and paste the following lines
+
+<role rolename="manager-gui"/>
+ <role rolename="manager-script"/>
+ <role rolename="manager-jmx"/>
+ <role rolename="manager-status"/>
+ <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+
+start the tomcat:
+_____________________
+cd /opt/tomcat/bin
+sh startup.sh
+how to access the tomcat webui:
+___________________________________
+
+
+b4 access the tomcat, try to configure 8080 as inbound rule from
+  security groups
+
+go ec2--select server----description---click on security groups--
+
+ select inbound rule tab----click on edit inbound-rule--
+add rule---customtcp   8080    anywhereipv4---save rule
+
+
+go back to tomcat,shutdown and start serve again:
+_________________________________________________
+cd /opt/tomcat/bin
+  sh shutdown.sh
+sh startup.sh
+
+go ec2-instance, copy the public dns with port and access from the web
+
+http://publlicdns:8080
+it open the tomcat webui
+enter username: admin and pwd as admin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
